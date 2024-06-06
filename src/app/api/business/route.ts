@@ -8,7 +8,8 @@ import { z } from "zod";
 
 export async function POST(req: NextRequest) {
     try {
-        const { userId } = await getTokenData(req);
+        const { id } = await getTokenData(req);
+        const userId = id;
 
         const { name, description, email, phone, address, website } = await req.json();
 
@@ -42,8 +43,8 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
     try {
-        const { userId } = await getTokenData(req);
-
+        const { id } = await getTokenData(req);
+        const userId = id;
         if (!userId) {
             return NextResponse.json({ error: 'You are not logged in!' }, { status: 400 });
         }
@@ -76,7 +77,8 @@ export async function GET(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
     try {
-        const { userId } = await getTokenData(req);
+        const { id } = await getTokenData(req);
+        const userId = id;
 
         const { _id, name, description, email, phone, address, website } = await req.json();
 

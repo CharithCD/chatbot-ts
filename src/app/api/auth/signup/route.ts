@@ -27,9 +27,15 @@ export async function POST(req: NextRequest) {
             email,
             password: hashedPassword
         });
-
         const savedUser = await newUser.save();
 
+        const business = new Business({
+            owner: newUser._id,
+            name: newUser.name,
+            email: newUser.email,
+        })
+        await business.save({ validateBeforeSave: false });
+        
         // Send verification email
 
         //if verified
@@ -38,6 +44,7 @@ export async function POST(req: NextRequest) {
         //return NextResponse.json({ message: "Signup successfully", status: 201, data: newUser });
 
     } catch (error) {
+        console.log(error)
         if (error instanceof z.ZodError) {
             const errorMessage = error.errors.map((err) => err.message).join(", ");
             return NextResponse.json({ message: errorMessage }, { status: 400 });

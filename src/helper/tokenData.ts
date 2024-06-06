@@ -2,12 +2,11 @@ import { NextRequest } from "next/server";
 import jwt from "jsonwebtoken";
 
 interface TokenData {
-    userId: string;
+    id: string;
 }
 
 export async function getTokenData(req: NextRequest): Promise<TokenData> {
     const token = req.cookies.get("token")?.value;
-
     if (!token) {
         throw new Error("Not authenticated");
     }

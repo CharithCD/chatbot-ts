@@ -51,8 +51,6 @@ export default function LoginPage() {
     async function onSubmit(values: z.infer<typeof loginSchema>) {
         try {
             const response = await axios.post("/api/auth/login", values);
-            console.log(response);
-            console.log(response.status);
             if (response.status >= 200 && response.status < 300) {
                 router.push("/dashboard");
                 showSuccessToast("Login successful!");
