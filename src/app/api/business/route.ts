@@ -1,3 +1,4 @@
+import dbConnect from "@/dbConfig/dbconfig";
 import ApiError from "@/helper/ApiError";
 import { getTokenData } from "@/helper/tokenData";
 import { Business } from "@/models/business.model";
@@ -5,9 +6,43 @@ import { businessSchema } from "@/types/zodSchemas";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+export async function GET(req: NextRequest) {
+    await dbConnect();
+    try {
+        const { id } = await getTokenData(req);
+        const userId = id;
+        if (!userId) {
+            return NextResponse.json({ error: 'You are not logged in!' }, { status: 400 });
+        }
 
+        const business = await Business.findOne({ owner: userId }).select(
+            "_id owner name description email phone address website"
+        );
+
+        if (!business) {
+            return NextResponse.json({ error: 'Business does not exist!' }, { status: 404 });
+        }
+
+        if (business.owner.toString() !== userId.toString()) {
+            return NextResponse.json({ error: 'You are not authorized to view this business!' }, { status: 401 });
+        }
+
+        return NextResponse.json({ message: "Businesses fetched successfully", status: 200, data: business });
+
+    } catch (error) {
+        if (error instanceof z.ZodError) {
+            const errorMessage = error.errors.map((err) => err.message).join(", ");
+            return NextResponse.json({ message: errorMessage }, { status: 400 });
+        } else if (error instanceof ApiError) {
+            return NextResponse.json({ error: error.message }, { status: error.statusCode })
+        } else {
+            return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+        }
+    }
+}
 
 export async function POST(req: NextRequest) {
+    await dbConnect();
     try {
         const { id } = await getTokenData(req);
         const userId = id;
@@ -42,41 +77,8 @@ export async function POST(req: NextRequest) {
     }
 }
 
-export async function GET(req: NextRequest) {
-    try {
-        const { id } = await getTokenData(req);
-        const userId = id;
-        if (!userId) {
-            return NextResponse.json({ error: 'You are not logged in!' }, { status: 400 });
-        }
-
-        const business = await Business.findOne({ owner: userId }).select(
-            "_id owner name description email phone address website"
-        );
-
-        if (!business) {
-            return NextResponse.json({ error: 'Business does not exist!' }, { status: 404 });
-        }
-
-        if (business.owner.toString() !== userId.toString()) {
-            return NextResponse.json({ error: 'You are not authorized to view this business!' }, { status: 401 });
-        }
-
-        return NextResponse.json({ message: "Businesses fetched successfully", status: 200, data: business });
-
-    } catch (error) {
-        if (error instanceof z.ZodError) {
-            const errorMessage = error.errors.map((err) => err.message).join(", ");
-            return NextResponse.json({ message: errorMessage }, { status: 400 });
-        } else if (error instanceof ApiError) {
-            return NextResponse.json({ error: error.message }, { status: error.statusCode })
-        } else {
-            return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
-        }
-    }
-}
-
 export async function PUT(req: NextRequest) {
+    await dbConnect();
     try {
         const { id } = await getTokenData(req);
         const userId = id;

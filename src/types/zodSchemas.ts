@@ -28,5 +28,14 @@ const businessSchema = z.object({
         .max(4500, { message: "Description must be at most 4500 characters long" }),
 });
 
+const faqSchema = z.object({
+    question: z.string()
+       .min(1, { message: "Question cannot be empty" })
+       .max(500, { message: "Question must be at most 500 characters long" }),
+    answer: z.string()
+       .min(1, { message: "Answer cannot be empty" })
+       .max(1000, { message: "Answer must be at most 1000 characters long" }),
+});
 
-export { loginSchema, signupSchema, businessSchema };
+
+export { loginSchema, signupSchema, businessSchema, faqSchema };

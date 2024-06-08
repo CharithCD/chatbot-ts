@@ -65,6 +65,7 @@ const Page = (): JSX.Element => {
         toast({
           description: "Update successful!",
         });
+        form.reset();
       } else {
         toast({
           variant: "destructive",
