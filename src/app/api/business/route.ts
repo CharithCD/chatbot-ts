@@ -1,6 +1,7 @@
 import ApiError from "@/helper/ApiError";
 import { getTokenData } from "@/helper/tokenData";
 import { Business } from "@/models/business.model";
+import { businessSchema } from "@/types/zodSchemas";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -80,7 +81,10 @@ export async function PUT(req: NextRequest) {
         const { id } = await getTokenData(req);
         const userId = id;
 
-        const { _id, name, description, email, phone, address, website } = await req.json();
+        const body = await req.json();
+        businessSchema.parse(body);
+
+        const { _id, name, description, email, phone, address, website } = body;
 
         if (!userId) {
             return NextResponse.json({ error: 'You are not logged in!' }, { status: 401 });
