@@ -14,12 +14,18 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+interface FAQ {
+  _id: string;
+  question: string;
+  answer: string;
+}
+
 const page = () => {
   const router = useRouter();
   const { toast } = useToast();
   const [hasFetched, setHasFetched] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [faqData, setFaqData] = useState([]);
+  const [faqData, setFaqData] = useState<FAQ[]>([]);
 
   const showErrorToast = (description: string) => {
     toast({
