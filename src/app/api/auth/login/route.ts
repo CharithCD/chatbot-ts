@@ -18,7 +18,6 @@ export async function POST(request: NextRequest) {
 
         if (!user) {
             return NextResponse.json({ error: 'User does not exist!' }, { status: 400 });
-            //throw new ApiError(400, "User does not exists!");
         }
 
         const validPassword = await bcrypt.compare(password, user.password);
