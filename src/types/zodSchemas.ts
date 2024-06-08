@@ -15,14 +15,17 @@ const signupSchema = z.object({
 });
 
 const businessSchema = z.object({
-    _id: z.string(),
+    _id: z.string().min(1, { message: "ID is required" }),
     name: z.string()
-        .min(3, { message: "Name must be at least 3 characters long" }),
-    email: z.string().email(),
-    phone: z.string(),
-    address: z.string(),
-    website: z.string(),
-    description: z.string(),
+        .min(3, { message: "Name must be at least 3 characters long" })
+        .max(100, { message: "Name must be at most 100 characters long" }),
+    email: z.string().email({ message: "Invalid email address" }),
+    phone: z.string().optional(),
+    address: z.string().optional(),
+    website: z.string().optional(),
+    description: z.string()
+        .min(300, { message: "Description must be at least 300 characters long" })
+        .max(4500, { message: "Description must be at most 4500 characters long" }),
 });
 
 

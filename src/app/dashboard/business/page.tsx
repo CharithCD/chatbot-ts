@@ -1,6 +1,6 @@
-"use client"
-import { Button } from '@/components/ui/button'
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+"use client";
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
@@ -9,59 +9,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React, { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-const page = () => {
+const Page = (): JSX.Element => {
   const router = useRouter();
   const { toast } = useToast();
-  const [loading, setLoading] = React.useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`/api/business`);
-        const businessData = response.data;
-        form.reset(businessData);
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-        toast({
-          variant: "destructive",
-          title: "Error fetching business data",
-          description: "Could not fetch business data. Please try again.",
-        });
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  },[]);
-
-  const showErrorToast = (description: string) => {
-    toast({
-      variant: "destructive",
-      title: "Uh oh! Something went wrong.",
-      description,
-    });
-  };
-
-  const showSuccessToast = (description: string) => {
-    toast({
-      description,
-    });
-  };
-
-  type formData = {
-    _id: string;
-    name: string;
-    email: string;
-    phone: string;
-    address: string;
-    website: string;
-    description: string;
-  }
+  const [loading, setLoading] = useState(true);
+  const [hasFetched, setHasFetched] = useState(false);
 
   const form = useForm<formData>({
     resolver: zodResolver(businessSchema),
@@ -76,20 +32,55 @@ const page = () => {
     },
   });
 
-  async function onSubmit(values: formData) {
+  useEffect(() => {
+    if (hasFetched) return;
+
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`/api/business`);
+        const businessData = response.data.data;
+        form.reset(businessData);
+        setHasFetched(true);
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Error fetching business data",
+          description: "Could not fetch business data. Please try again.",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [form, toast, hasFetched]);
+
+  type formData = z.infer<typeof businessSchema>;
+
+  const onSubmit = async (values: formData) => {
     try {
       const response = await axios.put("/api/business", values);
       if (response.status >= 200 && response.status < 300) {
-        router.push("/dashboard");
-        showSuccessToast("Update successful!");
+        router.push("/dashboard/business");
+        toast({
+          description: "Update successful!",
+        });
       } else {
-        showErrorToast("Failed. Please try again.");
+        toast({
+          variant: "destructive",
+          title: "Update failed",
+          description: "Failed. Please try again.",
+        });
       }
     } catch (error: any) {
       if (axios.isAxiosError(error) && error.response) {
         const { data } = error.response;
         const errorMessage = data?.error || "An error occurred during updating";
-        showErrorToast(errorMessage);
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: errorMessage,
+        });
       } else if (error instanceof z.ZodError) {
         error.errors.forEach(errorItem => {
           const field = errorItem.path.join('.');
@@ -99,26 +90,24 @@ const page = () => {
           });
         });
       } else {
-        showErrorToast("An unexpected error occurred during updating");
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: "An unexpected error occurred during updating",
+        });
       }
     }
-  }
+  };
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="text-lg font-semibold md:text-2xl">Business</h1>
       </div>
-      <div
-        className="flex flex-1 rounded-lg border border-dashed shadow-sm" x-chunk="dashboard-02-chunk-1"
-      >
+      <div className="flex flex-1 rounded-lg border border-dashed shadow-sm">
         <div className='p-8 w-full'>
-          <div>
-
-          </div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-
               <div className='grid md:grid-cols-2 gap-4'>
                 <div className='hidden'>
                   <FormField
@@ -128,14 +117,13 @@ const page = () => {
                       <FormItem>
                         <FormLabel>Business Id</FormLabel>
                         <FormControl>
-                          <Input placeholder="" disabled {...field} />
+                          <Input placeholder="Business ID" disabled {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
-
                 <FormField
                   control={form.control}
                   name="name"
@@ -206,7 +194,6 @@ const page = () => {
                     )}
                   />
                 </div>
-
                 <div className='col-span-2'>
                   <FormField
                     control={form.control}
@@ -222,10 +209,7 @@ const page = () => {
                     )}
                   />
                 </div>
-
-
               </div>
-
               <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting ? (
                   <>
@@ -240,7 +224,7 @@ const page = () => {
         </div>
       </div>
     </main>
-  )
-}
+  );
+};
 
-export default page
+export default Page;
