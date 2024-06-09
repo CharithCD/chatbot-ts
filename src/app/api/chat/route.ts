@@ -2,6 +2,8 @@ import { LangChainAdapter, StreamingTextResponse } from 'ai'
 import { NextRequest, NextResponse } from 'next/server';
 import { ChatOpenAI } from '@langchain/openai';
 import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { z } from 'zod';
+import ApiError from '@/helper/ApiError';
 
 export async function POST(request: NextRequest) {
     try {
@@ -45,8 +47,14 @@ export async function POST(request: NextRequest) {
         return new StreamingTextResponse(aiStream);
 
     } catch (error: any) {
-        console.log(error);
-        return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+        if (error instanceof z.ZodError) {
+            const errorMessage = error.errors.map((err) => err.message).join(", ");
+            return NextResponse.json({ message: errorMessage }, { status: 400 });
+        } else if (error instanceof ApiError) {
+            return NextResponse.json({ error: error.message }, { status: error.statusCode })
+        } else {
+            return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+        }
     }
 }
 
