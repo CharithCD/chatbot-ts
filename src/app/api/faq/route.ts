@@ -71,3 +71,40 @@ export async function POST(req: NextRequest) {
     }
 }
 
+type FAQ = {
+    _id: string;
+    question: string;
+    answer: string;
+};
+export async function DELETE(req: NextRequest) {
+    await dbConnect();
+    try {
+        const { id, businessId } = await getTokenData(req);
+        const userId = id;
+
+        const { faqId } = await req.json();
+
+        const business = await Business.findOne({ _id: businessId, owner: userId });
+
+        if (!business) {
+            return NextResponse.json({ error: 'Business not found or you are not authorized to delete FAQs for this business.' }, { status: 404 });
+        }
+
+        business.faq = business.faq.filter((faq:FAQ) => faq._id.toString() !== faqId);
+
+        await business.save();
+
+        return NextResponse.json({ message: 'FAQ deleted successfully.', status: 200 });
+
+    } catch (error) {
+        if (error instanceof z.ZodError) {
+            const errorMessage = error.errors.map((err) => err.message).join(", ");
+            return NextResponse.json({ message: errorMessage }, { status: 400 });
+        } else if (error instanceof ApiError) {
+            return NextResponse.json({ error: error.message }, { status: error.statusCode })
+        } else {
+            return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+        }
+    }
+}
+

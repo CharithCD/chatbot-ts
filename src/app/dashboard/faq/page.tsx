@@ -64,6 +64,26 @@ const page = () => {
     fetchData();
   }, [hasFetched]);
 
+  const deleteFAQ = async (faqId:string) => {
+    try {
+        const response = await axios.delete('/api/faq', {
+            data: { businessId: 'yourBusinessId', faqId },
+        });
+        if (response.status === 200) {
+            setFaqData(prevData => prevData.filter(faq => faq._id !== faqId));
+            toast({
+                description: "FAQ deleted successfully.",
+            });
+        }
+    } catch (error) {
+        toast({
+            variant: "destructive",
+            title: "Error deleting FAQ",
+            description: "Could not delete FAQ. Please try again.",
+        });
+    }
+};
+
   const form = useForm<z.infer<typeof faqSchema>>({
     resolver: zodResolver(faqSchema),
     defaultValues: {
@@ -164,7 +184,7 @@ const page = () => {
                           <Card key={index} className='p-8 mb-4'>
                             <div className='flex justify-between'>
                               <p className='text-sm font-semibold'>{faq.question}</p>
-                              <Trash2 size={20} className='cursor-pointer text-red-600' />
+                              <Trash2 size={20} className='cursor-pointer text-red-600' onClick={() => deleteFAQ(faq._id)}/>
                             </div>
                             <p className='text-sm mt-4 text-wrap'>{faq.answer}</p>
                           </Card>

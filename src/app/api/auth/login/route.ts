@@ -6,6 +6,7 @@ import dbConnect from "@/dbConfig/dbconfig";
 import ApiError from "@/helper/ApiError";
 import { z } from "zod";
 import { loginSchema } from "@/types/zodSchemas";
+import { Business } from "@/models/business.model";
 
 export async function POST(request: NextRequest) {
     await dbConnect();
@@ -27,9 +28,12 @@ export async function POST(request: NextRequest) {
             //throw new ApiError(400, "Invalid Password!");
         }
 
+        const business = await Business.findOne({ owner: user._id });
+
         const tokenData = {
             id: user._id,
             email: user.email,
+            businessId: business?._id,
         };
 
         const token = jwt.sign(tokenData, process.env.JWT_SECRET!, { expiresIn: "3h" });

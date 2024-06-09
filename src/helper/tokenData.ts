@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 
 interface TokenData {
     id: string;
+    businessId: string;
 }
 
 export async function getTokenData(req: NextRequest): Promise<TokenData> {

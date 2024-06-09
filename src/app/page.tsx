@@ -1,3 +1,4 @@
+import AIChatButton from "@/components/AIChatButton";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/sections/Navbar";
 import { ArrowRight } from "lucide-react";
@@ -31,6 +32,10 @@ export default function Home() {
         <main className="flex flex-col items-center">
           <Image src='/exlipse.png' width={900} height={900} className="absolute top-0 z-0" alt="background blur" />
         </main>
+        <div className="absolute flex justify-center items-center align-middle bg-background border-2 border-primary w-12 h-12 rounded-full bottom-5 right-16">
+          <AIChatButton/>
+        </div>
+
       </div>
     </>
   );

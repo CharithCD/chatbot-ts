@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link"
 import {
   Building,
+  CircleHelpIcon,
   CircleUser,
+  HelpCircle,
   Home,
   Menu,
   MessageSquareCode,
@@ -74,7 +76,7 @@ export default function RootLayout({
                   href="/dashboard/business"
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
                 >
-                  <ShoppingCart className="h-4 w-4" />
+                  <Building className="h-4 w-4" />
                   Business
                   {/* <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                       6
@@ -84,7 +86,7 @@ export default function RootLayout({
                   href="/dashboard/faq"
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
                 >
-                  <Package className="h-4 w-4" />
+                  <CircleHelpIcon className="h-4 w-4" />
                   FAQs{" "}
                 </Link>
               </nav>
@@ -136,7 +138,7 @@ export default function RootLayout({
                     href="/dashboard/faq"
                     className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
                   >
-                    <Package className="h-5 w-5" />
+                    <CircleHelpIcon className="h-5 w-5" />
                     FAQs
                   </Link>
                 </nav>
