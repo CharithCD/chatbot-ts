@@ -8,7 +8,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { faqSchema } from '@/types/zodSchemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import axios from 'axios'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -154,16 +154,19 @@ const page = () => {
                 </form>
               </Form>
             </div>
-            <div className='lg"w-1/2 border-2 p-8  rounded-[0.55rem]'>
+            <div className='lg:w-1/2 border-2 p-8  rounded-[0.55rem] h-96 overflow-y-scroll'>
               {
-                loading ? <Loader2 className="animate-spin mr-2" /> :
+                loading ? <Loader2 className="animate-spin mr-2 text-center text-primary" /> :
                   <div>
                     {
                       faqData.map((faq, index) => {
                         return (
-                          <Card key={index}>
-                            <CardTitle>{faq.question}</CardTitle>
-                            <CardContent>{faq.answer}</CardContent>
+                          <Card key={index} className='p-8 mb-4'>
+                            <div className='flex justify-between'>
+                              <p className='text-sm font-semibold'>{faq.question}</p>
+                              <Trash2 size={20} className='cursor-pointer text-red-600' />
+                            </div>
+                            <p className='text-sm mt-4 text-wrap'>{faq.answer}</p>
                           </Card>
                         )
                       })
