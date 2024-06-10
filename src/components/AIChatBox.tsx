@@ -1,46 +1,50 @@
-"use client"
-import React, { useEffect } from 'react'
-import { Message, useChat } from 'ai/react'
+"use client";
+import React, { useEffect } from 'react';
+import { Message, useChat } from 'ai/react';
 import { Bot, SendHorizonal, Trash, XCircle } from "lucide-react";
-import ReactMarkDown from "react-markdown";
-import Link from 'next/link'
+import ReactMarkdown from "react-markdown";
+import Link from 'next/link';
 import { Card, CardContent } from './ui/card';
 
 interface AIChatBoxProps {
-    open: boolean,
-    onClose: () => void
+    open: boolean;
+    onClose: () => void;
 }
 
 interface ChatMessageProps {
-    message: Message
+    message: Message;
 }
 
 function ChatMessage({ message: { role, content } }: ChatMessageProps) {
     const isAIMessage = role === 'assistant';
 
     return (
-        <div className={`p-2 mb-3 flex items-center ${isAIMessage ? 'me-5 justify-start' : 'ms-5 justify-end'} `}>
-            {isAIMessage && <Bot className='mr-2 flex-none w-5' size={24}/>}
+        <div className={`p-2 mb-3 flex items-center ${isAIMessage ? 'me-5 justify-start' : 'ms-5 justify-end'}`}>
+            {isAIMessage && <Bot className='mr-2 flex-none w-5' size={24} />}
             <div className={`rounded-md border px-3 py-2 ${isAIMessage ? 'bg-background' : 'bg-foreground text-background'}`}>
-                <ReactMarkDown components={{
-                    a: ({ node, ref, ...props }) => (
-                        <Link
-                            {...props}
-                            href={props.href ?? ""}
-                            className='text-primary hover:underline' />
-                    ),
-                    p: ({ node, ...props }) => (
-                        <p {...props} className="mt-3 first:mt-0 text-sm" />
-                    ),
-                    ul: ({ node, ...props }) => (
-                        <ul {...props} className="list-disc list-inside" />
-                    ),
-                    li: ({ node, ...props }) => (
-                        <li {...props} className="mt-1 first:mt-0" />
-                    )
-                }}>
+                <ReactMarkdown
+                    components={{
+                        a: ({ node, ...props }) => (
+                            <Link
+                                {...props}
+                                href={props.href ?? ""}
+                                className='text-primary hover:underline'
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            />
+                        ),
+                        p: ({ node, ...props }) => (
+                            <p {...props} className="mt-3 first:mt-0 text-sm" />
+                        ),
+                        ul: ({ node, ...props }) => (
+                            <ul {...props} className="list-disc list-inside" />
+                        ),
+                        li: ({ node, ...props }) => (
+                            <li {...props} className="mt-1 first:mt-0" />
+                        )
+                    }}>
                     {content}
-                </ReactMarkDown>
+                </ReactMarkdown>
             </div>
         </div>
     );
@@ -55,33 +59,13 @@ const AIChatBox = ({ open, onClose }: AIChatBoxProps) => {
         setMessages,
         isLoading,
         error
-    } = useChat({
-        //                 initialMessages: [{
-        //                     id: '1',
-        //                     role: 'assistant',
-        //                     content: 'Hello, Welcome to my AI Chatbot. How can I help you?'
-        //                 },
-        //                 {
-        //                     id: '2',
-        //                     role: 'user',
-        //                     content: 'Hi, how are you?'
-        //                 },
-        //                 {
-        //                     id: '3',
-        //                     role: 'assistant',
-        //                     content: `[Google](https://google.com)
-        // List:
-        // - item 1
-        // - item 2`
-        //                 }
-        //                 ]
-    });
+    } = useChat({});
 
     const lastMessageIsUser = messages.length > 0 && messages[messages.length - 1].role === 'user';
     const inputRef = React.useRef<HTMLInputElement>(null);
     const scrollRef = React.useRef<HTMLDivElement>(null);
 
-    useEffect(() => { 
+    useEffect(() => {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
@@ -140,8 +124,8 @@ const AIChatBox = ({ open, onClose }: AIChatBoxProps) => {
                                 </div>
                                 <div className='text-center'>
                                     <p className='text-sm mt-12 mx-8'>
-                                        You can ask the Chatbot any thing abot me it will find
-                                        the relavant answer.
+                                        You can ask the Chatbot anything about me and it will find
+                                        the relevant answer.
                                     </p>
                                 </div>
 
@@ -176,11 +160,9 @@ const AIChatBox = ({ open, onClose }: AIChatBoxProps) => {
                         <SendHorizonal size={20} />
                     </button>
                 </form>
-                {/* <ChatInput /> */}
             </Card>
         </div>
-
     )
 }
 
-export default AIChatBox
+export default AIChatBox;

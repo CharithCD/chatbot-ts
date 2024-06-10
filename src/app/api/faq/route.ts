@@ -2,7 +2,8 @@ import dbConnect from "@/dbConfig/dbconfig";
 import ApiError from "@/helper/ApiError";
 import { getTokenData } from "@/helper/tokenData";
 import { Business } from "@/models/business.model";
-import { businessSchema, faqSchema } from "@/types/zodSchemas";
+import { faqSchema } from "@/types/zodSchemas";
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -56,7 +57,7 @@ export async function POST(req: NextRequest) {
 
         business.faq.push({ question, answer });
         await business.save();
-
+        revalidatePath('/dashboard/faq', "page");
         return NextResponse.json({ message: "FAQ added successfully", status: 201 });
 
     } catch (error) {
@@ -76,6 +77,8 @@ type FAQ = {
     question: string;
     answer: string;
 };
+
+
 export async function DELETE(req: NextRequest) {
     await dbConnect();
     try {
@@ -90,7 +93,7 @@ export async function DELETE(req: NextRequest) {
             return NextResponse.json({ error: 'Business not found or you are not authorized to delete FAQs for this business.' }, { status: 404 });
         }
 
-        business.faq = business.faq.filter((faq:FAQ) => faq._id.toString() !== faqId);
+        business.faq = business.faq.filter((faq: FAQ) => faq._id.toString() !== faqId);
 
         await business.save();
 

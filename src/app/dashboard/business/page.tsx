@@ -8,6 +8,7 @@ import { businessSchema } from '@/types/zodSchemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
+import { revalidatePath } from 'next/cache';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -65,7 +66,8 @@ const Page = (): JSX.Element => {
         toast({
           description: "Update successful!",
         });
-        form.reset();
+        router.refresh();
+        
       } else {
         toast({
           variant: "destructive",
@@ -74,6 +76,7 @@ const Page = (): JSX.Element => {
         });
       }
     } catch (error: any) {
+      console.log(error);
       if (axios.isAxiosError(error) && error.response) {
         const { data } = error.response;
         const errorMessage = data?.error || "An error occurred during updating";

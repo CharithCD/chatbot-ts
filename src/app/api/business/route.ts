@@ -3,6 +3,7 @@ import ApiError from "@/helper/ApiError";
 import { getTokenData } from "@/helper/tokenData";
 import { Business } from "@/models/business.model";
 import { businessSchema } from "@/types/zodSchemas";
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -114,6 +115,8 @@ export async function PUT(req: NextRequest) {
         if (!updatedBusiness) {
             return NextResponse.json({ error: 'Something went wrong!' }, { status: 500 });
         }
+
+        revalidatePath('/dashboard/business', "page");
 
         return NextResponse.json({ message: "Business updated successfully", status: 200, data: updatedBusiness });
 
