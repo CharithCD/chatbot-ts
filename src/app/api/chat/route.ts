@@ -53,14 +53,14 @@ export async function POST(request: NextRequest) {
         });
 
         // Log the query response to debug
-        console.log("Query Response:", JSON.stringify(queryResponse1, null, 2));
+        // console.log("Query Response:", JSON.stringify(queryResponse1, null, 2));
 
         const filteredResults = queryResponse1.matches.filter(
             (match) => match && match.metadata && match.metadata.businessId === businessId
         );
 
         // Log filtered results to debug
-        console.log("Filtered Results:", JSON.stringify(filteredResults, null, 2));
+        // console.log("Filtered Results:", JSON.stringify(filteredResults, null, 2));
 
         const context = filteredResults.map(result => {
             if (result && result.metadata && result.metadata.text) {
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
         }).join("\n\n");
 
         // Log the constructed context
-        console.log("Context:", context);
+        // console.log("Context:", context);
 
         const chain = promptTemplate.pipe(model);
         const response = await chain.stream({ input: currentMessage, context: context });
