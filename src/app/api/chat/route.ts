@@ -23,11 +23,13 @@ export async function POST(request: NextRequest) {
             streaming: true
         });
 
+
+
         const promptTemplate = ChatPromptTemplate.fromMessages([
-            ["system", 
-                "You are an assistant. Answer the user's question based on the context provided below. " + 
-                "Provide links to pages with more information about the topic when it makes sense. " + 
-                "Format your answers in Markdown format.\n" + 
+            ["system",
+                "You are an assistant. Answer the user's question based only on the context provided below. " +
+                "Provide links to pages with more information about the topic when it makes sense. " +
+                "Format your answers in Markdown format.\n" +
                 "Context:\n{context}"
             ],
             ["user", "{input}"],
