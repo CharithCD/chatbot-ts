@@ -9,6 +9,7 @@ import { Card, CardContent } from './ui/card';
 interface AIChatBoxProps {
     open: boolean;
     onClose: () => void;
+    businessId: string;
 }
 
 interface ChatMessageProps {
@@ -50,7 +51,7 @@ function ChatMessage({ message: { role, content } }: ChatMessageProps) {
     );
 }
 
-const AIChatBox = ({ open, onClose }: AIChatBoxProps) => {
+const AIChatBox = ({ open, onClose, businessId }: AIChatBoxProps) => {
     const {
         messages,
         input,
@@ -58,8 +59,10 @@ const AIChatBox = ({ open, onClose }: AIChatBoxProps) => {
         handleSubmit,
         setMessages,
         isLoading,
-        error
-    } = useChat({});
+        error,
+    } = useChat({
+
+    });
 
     const lastMessageIsUser = messages.length > 0 && messages[messages.length - 1].role === 'user';
     const inputRef = React.useRef<HTMLInputElement>(null);
